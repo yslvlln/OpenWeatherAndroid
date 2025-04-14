@@ -46,8 +46,10 @@ dependencies {
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
+
+    api(platform(libs.firebase.bom))
+    api(libs.firebase.auth)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

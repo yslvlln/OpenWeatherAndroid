@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Dummy::class],
-    version = 0,
+    version = 1,
     exportSchema = true
 )
 internal abstract class OpenWeatherDatabase: RoomDatabase() {
