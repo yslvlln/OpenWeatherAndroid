@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt)
     id("com.google.gms.google-services")
+    kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
 android {
@@ -40,9 +41,12 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.data)
     implementation(projects.feature.auth)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -50,10 +54,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.navigation.compose)
     ksp(libs.hilt.compiler)
-
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
