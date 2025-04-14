@@ -1,13 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.dagger.hilt)
-    id("kotlinx-serialization")
 }
 
 android {
-    namespace = "com.yslvlln.feature.auth"
+    namespace = "com.yslvlln.core.testing"
     compileSdk = 35
 
     defaultConfig {
@@ -33,18 +30,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.data)
-    implementation(projects.core.testing)
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    ksp(libs.hilt.compiler)
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockk)
-    testImplementation(libs.truth)
-    testImplementation(libs.kotlin.test)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    api(libs.kotlinx.coroutines.test)
+    implementation(libs.hilt.android.testing)
 }
