@@ -26,8 +26,29 @@ internal class UserRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun signIn(email: String, password: String): Result<User> = try {
+        tryFirebaseSignIn(email, password)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     private fun tryFirebaseSignUp(email: String, password: String): Result<User> {
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password)
+        return if (authResult.isSuccessful) {
+            val firebaseUser = authResult.result.user
+            val domainUser = User(
+                id = firebaseUser?.uid.orEmpty(),
+                email = firebaseUser?.email.orEmpty(),
+                userName = firebaseUser?.displayName
+            )
+            Result.success(domainUser)
+        } else {
+            Result.failure(authResult.exception?.cause ?: Exception(UNKNOWN_ERROR))
+        }
+    }
+
+    private fun tryFirebaseSignIn(email: String, password: String): Result<User> {
+        val authResult = firebaseAuth.signInWithEmailAndPassword(email, password)
         return if (authResult.isSuccessful) {
             val firebaseUser = authResult.result.user
             val domainUser = User(

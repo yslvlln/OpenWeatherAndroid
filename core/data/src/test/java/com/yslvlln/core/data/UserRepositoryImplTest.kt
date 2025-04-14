@@ -87,6 +87,43 @@ class UserRepositoryImplTest {
         assertEquals(UNKNOWN_ERROR, result.exceptionOrNull()?.message)
     }
 
+    @Test
+    fun `signIn returns User when Firebase succeeds`() = runTest {
+        val email = "test@example.com"
+        val password = "securepassword"
+
+        val firebaseUser = getMockFirebaseUser()
+
+        val authResult = mockk<AuthResult> {
+            coEvery { user } returns firebaseUser
+        }
+
+        val task = Tasks.forResult(authResult)
+
+        coEvery { firebaseAuth.signInWithEmailAndPassword(email, password) } returns task
+
+        val result = userRepository.signIn(email, password)
+
+        assertTrue(result.isSuccess)
+        assertEquals("user123", result.getOrNull()?.id)
+        assertEquals("test@example.com", result.getOrNull()?.email)
+    }
+
+    @Test
+    fun `signIn returns failure when Firebase throws`() = runTest {
+        val email = "fail@example.com"
+        val password = "badpassword"
+
+        coEvery {
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+        } returns Tasks.forException(Exception(UNKNOWN_ERROR))
+
+        val result = userRepository.signIn(email, password)
+
+        assertTrue(result.isFailure)
+        assertEquals(UNKNOWN_ERROR, result.exceptionOrNull()?.message)
+    }
+
     private fun getMockFirebaseUser(): FirebaseUser {
         val mockFirebaseUser = mockk<FirebaseUser> {
             coEvery { uid } returns "user123"
