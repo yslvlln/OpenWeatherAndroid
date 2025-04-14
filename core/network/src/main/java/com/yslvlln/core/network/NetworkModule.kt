@@ -1,6 +1,7 @@
 package com.yslvlln.core.network
 
 import androidx.tracing.trace
+import com.google.firebase.auth.FirebaseAuth
 import com.yslvlln.core.common.BASE_URL
 import com.yslvlln.core.common.DATA
 import com.yslvlln.core.common.ENDPOINT_FORMAT
@@ -17,7 +18,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import javax.inject.Singleton
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -64,5 +64,11 @@ internal object NetworkModule {
             .callFactory { okhttpCallFactory.get().newCall(it) }
             .addConverterFactory(json.asConverterFactory("application/json; charset=UTF8".toMediaType()))
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providesFirebaseAuth(): FirebaseAuth = trace("OpenWeatherFirebaseAuth") {
+        FirebaseAuth.getInstance()
     }
 }
