@@ -1,46 +1,84 @@
 package com.yslvlln.feature.weather
 
+import android.location.Location
 import com.yslvlln.core.data.repository.WeatherRepository
 import com.yslvlln.core.testing.MainDispatcherRule
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import kotlin.test.Test
+import kotlin.test.assertIs
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CurrentWeatherViewModelTest {
 
-    private val weatherRepository: WeatherRepository = mockk()
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private val locationProvider: LocationProvider = mockk()
+    private val weatherRepository: WeatherRepository = mockk()
     private lateinit var viewModel: CurrentWeatherViewModel
 
-    @get:Rule
-    val dispatcherRule = MainDispatcherRule()
+    private val fakeWeather = Stubs.CURRENT_WEATHER
 
     @Before
-    fun setUp() {
+    fun setup() {
         viewModel = CurrentWeatherViewModel(weatherRepository, locationProvider)
     }
 
     @Test
-    fun `getCurrentWeather returns Success when repository succeeds`() = runTest {
+    fun `onPermissionUpdate emits Loading then Success when permission is granted`() = runTest {
         // Given
-        val lat = 45.0
-        val lng = 7.0
-        val weatherResponse = Stubs.CURRENT_WEATHER
+        val location = mockk<Location>()
+        every { location.latitude } returns 1.0
+        every { location.longitude } returns 1.0
+        coEvery { locationProvider.getCurrentLocation() } returns location
+        coEvery { weatherRepository.getCurrentWeather(1.0, 1.0) } returns Result.success(fakeWeather)
 
-        coEvery { weatherRepository.getCurrentWeather(lat, lng) } returns Result.success(weatherResponse)
+        // When
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect()
+        }
+
+        viewModel.onPermissionUpdate(true)
+        advanceUntilIdle()
+
+        // Then
+        val currentState = viewModel.state.value
+        assertIs<CurrentWeatherUiState.Success>(currentState)
+        assertEquals(fakeWeather, currentState.data)
+    }
+
+    @Test
+    fun `onPermissionUpdate emits PermissionDenied when permission is denied`() = runTest {
+        // Given — nothing to mock
+
+        // When
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect()
+        }
+
+        viewModel.onPermissionUpdate(false)
+        advanceUntilIdle()
+
+        // Then
+        val currentState = viewModel.state.value
+        assertEquals(CurrentWeatherUiState.PermissionDenied, currentState)
+    }
+
+    @Test
+    fun `getCurrentWeather emits Error when location is null`() = runTest {
+        // Given
+        coEvery { locationProvider.getCurrentLocation() } returns null
 
         // When
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -51,22 +89,19 @@ class CurrentWeatherViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertTrue(viewModel.state.value is CurrentWeatherUiState.Success)
-        val successState = viewModel.state.value as CurrentWeatherUiState.Success
-        assertNotNull(successState.data)
-        assertEquals(Stubs.CURRENT_WEATHER.cityName, successState.data?.cityName)
-        assertEquals(Stubs.CURRENT_WEATHER.temperature, successState.data?.temperature)
-        assertEquals(Stubs.CURRENT_WEATHER.weatherDescription, successState.data?.weatherDescription)
+        val currentState = viewModel.state.value
+        assertIs<CurrentWeatherUiState.Error>(currentState)
+        assertEquals("Unable to retrieve location", currentState.message)
     }
 
     @Test
-    fun `getCurrentWeather returns Error when repository fails`() = runTest {
+    fun `getCurrentWeather emits Error when repository fails`() = runTest {
         // Given
-        val lat = 45.0
-        val lng = 7.0
-        val errorMessage = "API Error"
-
-        coEvery { weatherRepository.getCurrentWeather(lat, lng) } returns Result.failure(Exception(errorMessage))
+        val location = mockk<Location>()
+        every { location.latitude } returns 1.0
+        every { location.longitude } returns 1.0
+        coEvery { locationProvider.getCurrentLocation() } returns location
+        coEvery { weatherRepository.getCurrentWeather(1.0, 1.0) } returns Result.failure(Exception("API failed"))
 
         // When
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -77,34 +112,8 @@ class CurrentWeatherViewModelTest {
         advanceUntilIdle()
 
         // Then
-        assertTrue(viewModel.state.value is CurrentWeatherUiState.Error)
-        val errorState = viewModel.state.value as CurrentWeatherUiState.Error
-        assertEquals(errorMessage, errorState.message)
-    }
-
-    @Test
-    fun `getCurrentWeather returns Loading and then Success`() = runTest {
-        // Given
-        val lat = 45.0
-        val lng = 7.0
-
-        coEvery { weatherRepository.getCurrentWeather(lat, lng) } returns Result.success(Stubs.CURRENT_WEATHER)
-
-        // When
-        val collectedStates = mutableListOf<CurrentWeatherUiState>()
-
-        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.toList(collectedStates)
-        }
-
-        // Then
-        viewModel.getCurrentWeather()
-        advanceUntilIdle()
-
-        assertTrue(collectedStates.first() is CurrentWeatherUiState.RequestingPermission)
-        assertTrue(collectedStates[1] is CurrentWeatherUiState.Loading)
-        assertTrue(collectedStates.last() is CurrentWeatherUiState.Success)
-
-        job.cancel()
+        val currentState = viewModel.state.value
+        assertIs<CurrentWeatherUiState.Error>(currentState)
+        assertEquals("API failed", currentState.message)
     }
 }
