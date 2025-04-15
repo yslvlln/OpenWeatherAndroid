@@ -3,6 +3,7 @@ package com.yslvlln.feature.weather.state
 import com.yslvlln.core.model.CurrentWeather
 
 sealed class CurrentWeatherUiState {
+    data object Idle: CurrentWeatherUiState()
     data object RequestingPermission : CurrentWeatherUiState()
     data object Loading : CurrentWeatherUiState()
     data object PermissionDenied : CurrentWeatherUiState()

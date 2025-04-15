@@ -61,6 +61,10 @@ fun CurrentWeatherScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.getUser()
+    }
+
     when (state) {
         is CurrentWeatherUiState.Error -> {
             // TODO
@@ -86,6 +90,10 @@ fun CurrentWeatherScreen(
 
         CurrentWeatherUiState.PermissionDenied -> {
             PermissionDeniedContent()
+        }
+
+        CurrentWeatherUiState.Idle -> {
+            // Do nothing
         }
     }
 }

@@ -2,6 +2,7 @@ package com.yslvlln.feature.weather.screens.currentWeather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yslvlln.core.data.repository.UserRepository
 import com.yslvlln.core.data.repository.WeatherRepository
 import com.yslvlln.feature.weather.state.CurrentWeatherUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,12 +13,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CurrentWeatherViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val weatherRepository: WeatherRepository,
     private val locationProvider: LocationProvider
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<CurrentWeatherUiState>(CurrentWeatherUiState.RequestingPermission)
+    private val _state = MutableStateFlow<CurrentWeatherUiState>(CurrentWeatherUiState.Idle)
     val state: StateFlow<CurrentWeatherUiState> get() = _state
+
+    fun getUser() {
+        viewModelScope.launch {
+            val firebaseUser = userRepository.getUser()
+            if (firebaseUser != null) {
+                _state.value = CurrentWeatherUiState.RequestingPermission
+            }
+        }
+    }
 
     fun onPermissionUpdate(isGranted: Boolean) {
         if (isGranted) {
