@@ -1,6 +1,7 @@
 package com.yslvlln.feature.weather
 
 import android.location.Location
+import com.yslvlln.core.data.repository.UserRepository
 import com.yslvlln.core.data.repository.WeatherRepository
 import com.yslvlln.core.testing.MainDispatcherRule
 import com.yslvlln.feature.weather.screens.currentWeather.CurrentWeatherViewModel
@@ -28,6 +29,7 @@ class CurrentWeatherHistoryViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val locationProvider: LocationProvider = mockk()
+    private val userRepository: UserRepository = mockk()
     private val weatherRepository: WeatherRepository = mockk()
     private lateinit var viewModel: CurrentWeatherViewModel
 
@@ -35,7 +37,7 @@ class CurrentWeatherHistoryViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = CurrentWeatherViewModel(weatherRepository, locationProvider)
+        viewModel = CurrentWeatherViewModel(userRepository, weatherRepository, locationProvider)
     }
 
     @Test
