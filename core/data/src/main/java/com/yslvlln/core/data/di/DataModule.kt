@@ -1,7 +1,7 @@
 package com.yslvlln.core.data.di
 
-import com.yslvlln.core.data.UserRepository
-import com.yslvlln.core.data.UserRepositoryImpl
+import com.yslvlln.core.data.repository.UserRepository
+import com.yslvlln.core.data.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

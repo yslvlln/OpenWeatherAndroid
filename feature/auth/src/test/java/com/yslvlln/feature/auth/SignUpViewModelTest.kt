@@ -1,6 +1,6 @@
 package com.yslvlln.feature.auth
 
-import com.yslvlln.core.data.UserRepository
+import com.yslvlln.core.data.repository.UserRepository
 import com.yslvlln.core.data.model.User
 import com.yslvlln.core.testing.MainDispatcherRule
 import com.yslvlln.feature.auth.state.SignUpUiState

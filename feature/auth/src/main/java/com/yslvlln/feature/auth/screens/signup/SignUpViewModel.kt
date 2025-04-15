@@ -3,7 +3,7 @@ package com.yslvlln.feature.auth.screens.signup
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yslvlln.core.data.UserRepository
+import com.yslvlln.core.data.repository.UserRepository
 import com.yslvlln.feature.auth.state.SignUpUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

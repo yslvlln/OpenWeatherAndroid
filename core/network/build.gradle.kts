@@ -6,6 +6,8 @@ plugins {
     id("kotlinx-serialization")
 }
 
+val weatherApiKey: String = project.findProperty("API_KEY") as? String ?: ""
+
 android {
     namespace = "com.yslvlln.core.network"
     compileSdk = 35
@@ -15,6 +17,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "API_KEY", "\"$weatherApiKey\"")
     }
 
     buildTypes {
@@ -37,6 +41,7 @@ android {
 
 dependencies {
     implementation(projects.core.common)
+    implementation(projects.core.testing)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.room.ktx)
     implementation(libs.hilt.android)
@@ -46,11 +51,13 @@ dependencies {
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
-
     api(platform(libs.firebase.bom))
     api(libs.firebase.auth)
-
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlin.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
