@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -5,8 +7,11 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     id("kotlinx-serialization")
 }
+val localProperties = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
+}
 
-val weatherApiKey: String = project.findProperty("API_KEY") as? String ?: ""
+val weatherApiKey = localProperties.getProperty("API_KEY") ?: ""
 
 android {
     namespace = "com.yslvlln.core.network"
