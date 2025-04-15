@@ -2,12 +2,15 @@ package com.yslvlln.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.yslvlln.core.database.dao.WeatherDao
+import com.yslvlln.core.database.model.WeatherEntity
 
 @Database(
-    entities = [Dummy::class],
+    entities = [WeatherEntity::class],
     version = 1,
     exportSchema = true
 )
 internal abstract class OpenWeatherDatabase: RoomDatabase() {
-    // TODO add DAOs here
+
+    abstract fun weatherDao(): WeatherDao
 }

@@ -1,8 +1,9 @@
-package com.yslvlln.core.database
+package com.yslvlln.core.database.di
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.yslvlln.core.database.OpenWeatherDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,7 @@ internal object DatabaseModule {
     @Singleton
     fun providesOpenWeatherDatabase(
         @ApplicationContext context: Context
-    ): RoomDatabase {
+    ): OpenWeatherDatabase {
         return Room.databaseBuilder(
             context = context,
             klass = OpenWeatherDatabase::class.java,
