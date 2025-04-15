@@ -1,19 +1,22 @@
-package com.yslvlln.feature.auth
+package com.yslvlln.feature.auth.screens.signin
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,36 +41,22 @@ fun SignInScreen(
     val email by viewModel.email.collectAsStateWithLifecycle()
     val password by viewModel.password.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        when (state) {
-            is SignInUiState.Success -> {
-                onSignIn.invoke()
-            }
-
-            is SignInUiState.Error -> {
-                // TODO
-            }
-
-            SignInUiState.Idle -> {
-                SignInForm(
-                    email = email,
-                    password = password,
-                    onEmailChange = { viewModel.onEmailChange(it) },
-                    onPasswordChange = { viewModel.onPasswordChange(it) },
-                    onSignInClick = { viewModel.signIn(email, password) },
-                    onNavigateToSignUp = { onNavigateToSignUp.invoke() }
-                )
-            }
-
-            SignInUiState.Loading -> {
-                // TODO
-            }
+    LaunchedEffect(state) {
+        if (state is SignInUiState.Success) {
+            onSignIn.invoke()
         }
     }
 
+    SignInForm(
+        email = email,
+        password = password,
+        onEmailChange = { viewModel.onEmailChange(it) },
+        onPasswordChange = { viewModel.onPasswordChange(it) },
+        onSignInClick = { viewModel.signIn(email, password) },
+        onNavigateToSignUp = { onNavigateToSignUp.invoke() },
+        isLoading = state is SignInUiState.Loading,
+        errorMessage = (state as? SignInUiState.Error)?.message
+    )
 }
 
 @Composable
@@ -77,12 +66,15 @@ internal fun SignInForm(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onSignInClick: () -> Unit,
-    onNavigateToSignUp: () -> Unit
+    onNavigateToSignUp: () -> Unit,
+    isLoading: Boolean = false,
+    errorMessage: String? = null
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -126,14 +118,30 @@ internal fun SignInForm(
                 visualTransformation = PasswordVisualTransformation()
             )
 
+            if (!errorMessage.isNullOrEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = { onSignInClick.invoke() },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = email.isNotEmpty() && password.isNotEmpty()
+                enabled = !isLoading && (email.isNotEmpty() && password.isNotEmpty())
             ) {
-                Text("Login")
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Login")
+                }
             }
         }
 

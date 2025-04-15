@@ -1,17 +1,17 @@
-package com.yslvlln.feature.auth
+package com.yslvlln.feature.auth.screens.signin
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object SignInNavigation
+data object SignInRoute
 
 fun NavGraphBuilder.signInDestination(
     onSignIn: () -> Unit,
     onNavigateToSignUp: () -> Unit,
 ) {
-    composable<SignInNavigation> {
+    composable<SignInRoute> {
         SignInScreen(
             onSignIn = onSignIn,
             onNavigateToSignUp = onNavigateToSignUp

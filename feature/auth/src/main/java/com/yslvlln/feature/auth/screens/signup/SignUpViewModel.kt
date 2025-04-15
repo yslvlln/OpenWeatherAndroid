@@ -1,9 +1,10 @@
-package com.yslvlln.feature.auth
+package com.yslvlln.feature.auth.screens.signup
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yslvlln.core.data.UserRepository
-import com.yslvlln.feature.auth.state.SignInUiState
+import com.yslvlln.feature.auth.state.SignUpUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,9 +12,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel @Inject constructor(
+class SignUpViewModel @Inject constructor(
     private val userRepository: UserRepository
-) : ViewModel() {
+): ViewModel() {
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -21,8 +22,8 @@ class SignInViewModel @Inject constructor(
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> = _password
 
-    private val _state = MutableStateFlow<SignInUiState>(SignInUiState.Idle)
-    val state: StateFlow<SignInUiState> = _state
+    private val _state = MutableStateFlow<SignUpUiState>(SignUpUiState.Idle)
+    val state: StateFlow<SignUpUiState> = _state
 
     fun onEmailChange(email: String) {
         _email.value = email
@@ -32,19 +33,19 @@ class SignInViewModel @Inject constructor(
         _password.value = password
     }
 
-    fun signIn(email: String, password: String) {
+    fun signUp(email: String, password: String) {
         viewModelScope.launch {
-            _state.value = SignInUiState.Loading
-            val result = userRepository.signIn(email, password)
+            _state.value = SignUpUiState.Loading
+            val result = userRepository.signUp(email, password)
             _state.value = result.fold(
                 onSuccess = {
-                    SignInUiState.Success(it)
+                    SignUpUiState.Success(it)
                 },
                 onFailure = {
-                    SignInUiState.Error(it.message.orEmpty())
+                    Log.e(this::class.java.simpleName, it.message.orEmpty())
+                    SignUpUiState.Error(it.message.orEmpty())
                 },
             )
         }
     }
-
 }

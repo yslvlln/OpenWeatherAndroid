@@ -4,6 +4,7 @@ import com.yslvlln.core.data.UserRepository
 import com.yslvlln.core.data.model.User
 import com.yslvlln.core.testing.MainDispatcherRule
 import com.yslvlln.feature.auth.state.SignUpUiState
+import com.yslvlln.feature.auth.screens.signup.SignUpViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

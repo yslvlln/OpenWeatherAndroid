@@ -3,6 +3,7 @@ package com.yslvlln.core.data
 import com.google.firebase.auth.FirebaseAuth
 import com.yslvlln.core.common.UNKNOWN_ERROR
 import com.yslvlln.core.data.model.User
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
@@ -32,33 +33,39 @@ internal class UserRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    private fun tryFirebaseSignUp(email: String, password: String): Result<User> {
-        val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password)
-        return if (authResult.isSuccessful) {
-            val firebaseUser = authResult.result.user
+    private suspend fun tryFirebaseSignUp(email: String, password: String): Result<User> {
+        return try {
+            val authResult = firebaseAuth
+                .createUserWithEmailAndPassword(email, password)
+                .await()
+
+            val firebaseUser = authResult.user
             val domainUser = User(
                 id = firebaseUser?.uid.orEmpty(),
                 email = firebaseUser?.email.orEmpty(),
                 userName = firebaseUser?.displayName
             )
             Result.success(domainUser)
-        } else {
-            Result.failure(authResult.exception?.cause ?: Exception(UNKNOWN_ERROR))
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
-    private fun tryFirebaseSignIn(email: String, password: String): Result<User> {
-        val authResult = firebaseAuth.signInWithEmailAndPassword(email, password)
-        return if (authResult.isSuccessful) {
-            val firebaseUser = authResult.result.user
+    private suspend fun tryFirebaseSignIn(email: String, password: String): Result<User> {
+        return try {
+            val authResult = firebaseAuth
+                .signInWithEmailAndPassword(email, password)
+                .await()
+
+            val firebaseUser = authResult.user
             val domainUser = User(
                 id = firebaseUser?.uid.orEmpty(),
                 email = firebaseUser?.email.orEmpty(),
                 userName = firebaseUser?.displayName
             )
             Result.success(domainUser)
-        } else {
-            Result.failure(authResult.exception?.cause ?: Exception(UNKNOWN_ERROR))
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

@@ -5,26 +5,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.yslvlln.feature.auth.SignInNavigation
-import com.yslvlln.feature.auth.SignInScreen
-import com.yslvlln.feature.auth.signInDestination
+import com.yslvlln.feature.auth.screens.signin.SignInRoute
+import com.yslvlln.feature.auth.screens.signin.signInDestination
+import com.yslvlln.feature.auth.screens.signup.SignUpRoute
+import com.yslvlln.feature.auth.screens.signup.signUpDestination
 import com.yslvlln.openweatherandroid.screens.MainRoute
 import com.yslvlln.openweatherandroid.screens.mainDestination
 import com.yslvlln.openweatherandroid.ui.theme.OpenWeatherAndroidTheme
+import com.yslvlln.openweatherandroid.utils.navigateUpToRoot
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,9 +42,7 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(state) {
                     when (state) {
                         InitialNavigation.LANDING -> {
-                            navController.navigate(SignInNavigation) {
-                                popUpTo(SignInNavigation)
-                            }
+                            navController.navigateUpToRoot(SignInRoute)
                         }
 
                         InitialNavigation.HOME -> {
@@ -81,8 +74,21 @@ fun RootNavigation(navController: NavHostController) {
         mainDestination()
 
         signInDestination(
-            onSignIn = {},
-            onNavigateToSignUp = {}
+            onSignIn = {
+                navController.navigateUpToRoot(MainRoute)
+            },
+            onNavigateToSignUp = {
+                navController.navigate(SignUpRoute)
+            }
+        )
+
+        signUpDestination(
+            onSignUp = {
+                navController.navigateUpToRoot(MainRoute)
+            },
+            onNavigateUp = {
+                navController.navigateUp()
+            }
         )
     }
 }
