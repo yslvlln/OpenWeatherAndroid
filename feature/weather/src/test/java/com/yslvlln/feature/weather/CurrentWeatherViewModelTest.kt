@@ -1,7 +1,6 @@
 package com.yslvlln.feature.weather
 
 import com.yslvlln.core.data.repository.WeatherRepository
-import com.yslvlln.core.model.CurrentWeather
 import com.yslvlln.core.testing.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -23,6 +22,7 @@ import kotlin.test.Test
 class CurrentWeatherViewModelTest {
 
     private val weatherRepository: WeatherRepository = mockk()
+    private val locationProvider: LocationProvider = mockk()
     private lateinit var viewModel: CurrentWeatherViewModel
 
     @get:Rule
@@ -30,7 +30,7 @@ class CurrentWeatherViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = CurrentWeatherViewModel(weatherRepository)
+        viewModel = CurrentWeatherViewModel(weatherRepository, locationProvider)
     }
 
     @Test
@@ -47,16 +47,16 @@ class CurrentWeatherViewModelTest {
             viewModel.state.collect()
         }
 
-        viewModel.getCurrentWeather(lat, lng)
+        viewModel.getCurrentWeather()
         advanceUntilIdle()
 
         // Then
         assertTrue(viewModel.state.value is CurrentWeatherUiState.Success)
         val successState = viewModel.state.value as CurrentWeatherUiState.Success
-        assertNotNull(successState.weather)
-        assertEquals(Stubs.CURRENT_WEATHER.cityName, successState.weather?.cityName)
-        assertEquals(Stubs.CURRENT_WEATHER.temperature, successState.weather?.temperature)
-        assertEquals(Stubs.CURRENT_WEATHER.weatherDescription, successState.weather?.weatherDescription)
+        assertNotNull(successState.data)
+        assertEquals(Stubs.CURRENT_WEATHER.cityName, successState.data?.cityName)
+        assertEquals(Stubs.CURRENT_WEATHER.temperature, successState.data?.temperature)
+        assertEquals(Stubs.CURRENT_WEATHER.weatherDescription, successState.data?.weatherDescription)
     }
 
     @Test
@@ -73,13 +73,13 @@ class CurrentWeatherViewModelTest {
             viewModel.state.collect()
         }
 
-        viewModel.getCurrentWeather(lat, lng)
+        viewModel.getCurrentWeather()
         advanceUntilIdle()
 
         // Then
         assertTrue(viewModel.state.value is CurrentWeatherUiState.Error)
         val errorState = viewModel.state.value as CurrentWeatherUiState.Error
-        assertEquals(errorMessage, errorState.errorMessage)
+        assertEquals(errorMessage, errorState.message)
     }
 
     @Test
@@ -98,10 +98,10 @@ class CurrentWeatherViewModelTest {
         }
 
         // Then
-        viewModel.getCurrentWeather(lat, lng)
+        viewModel.getCurrentWeather()
         advanceUntilIdle()
 
-        assertTrue(collectedStates.first() is CurrentWeatherUiState.Idle)
+        assertTrue(collectedStates.first() is CurrentWeatherUiState.RequestingPermission)
         assertTrue(collectedStates[1] is CurrentWeatherUiState.Loading)
         assertTrue(collectedStates.last() is CurrentWeatherUiState.Success)
 

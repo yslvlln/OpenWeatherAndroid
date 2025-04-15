@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(projects.core.data)
     implementation(projects.feature.auth)
+    implementation(projects.feature.weather)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
