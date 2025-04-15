@@ -11,7 +11,7 @@ import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class WeatherRepositoryTest {
+class WeatherHistoryRepositoryTest {
 
     private val remoteSource: WeatherRemoteSource = mockk()
     private lateinit var repository: WeatherRepository

@@ -1,4 +1,4 @@
-package com.yslvlln.feature.weather
+package com.yslvlln.feature.weather.screens.currentWeather
 
 import android.annotation.SuppressLint
 import android.content.Context

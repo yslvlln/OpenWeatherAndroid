@@ -3,6 +3,9 @@ package com.yslvlln.feature.weather
 import android.location.Location
 import com.yslvlln.core.data.repository.WeatherRepository
 import com.yslvlln.core.testing.MainDispatcherRule
+import com.yslvlln.feature.weather.screens.currentWeather.CurrentWeatherViewModel
+import com.yslvlln.feature.weather.screens.currentWeather.LocationProvider
+import com.yslvlln.feature.weather.state.CurrentWeatherUiState
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -19,7 +22,7 @@ import kotlin.test.Test
 import kotlin.test.assertIs
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class CurrentWeatherViewModelTest {
+class CurrentWeatherHistoryViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()

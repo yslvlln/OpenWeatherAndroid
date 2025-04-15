@@ -5,6 +5,7 @@ import com.yslvlln.core.data.mapper.toDomain
 import com.yslvlln.core.data.mapper.toEntity
 import com.yslvlln.core.database.dao.WeatherDao
 import com.yslvlln.core.model.CurrentWeather
+import com.yslvlln.core.model.WeatherHistory
 import com.yslvlln.core.network.data.WeatherRemoteSource
 import javax.inject.Inject
 
@@ -20,6 +21,15 @@ class WeatherRepositoryImpl @Inject constructor(
             Result.success(result.getOrThrow().toDomain())
         } else {
             Result.failure(result.exceptionOrNull() ?: Exception(UNKNOWN_ERROR))
+        }
+    }
+
+    override suspend fun getWeatherHistory(): Result<List<WeatherHistory>> {
+        return try {
+            val entries = weatherDao.getAllWeather().map { it.toDomain() }
+            Result.success(entries)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

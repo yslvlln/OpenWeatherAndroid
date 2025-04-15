@@ -26,11 +26,10 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.yslvlln.feature.weather.CurrentWeatherRoute
-import com.yslvlln.feature.weather.currentWeatherDestination
-import com.yslvlln.openweatherandroid.screens.history.WeatherHistoryRoute
-import com.yslvlln.openweatherandroid.screens.history.historyDestination
-import com.yslvlln.openweatherandroid.screens.home.HomeRoute
+import com.yslvlln.feature.weather.screens.currentWeather.CurrentWeatherRoute
+import com.yslvlln.feature.weather.screens.currentWeather.currentWeatherDestination
+import com.yslvlln.feature.weather.screens.history.WeatherHistoryRoute
+import com.yslvlln.feature.weather.screens.history.weatherHistoryDestination
 
 data class MainScreenTopLevelRoute<T : Any>(val name: String, val route: T?, val icon: ImageVector)
 
@@ -118,7 +117,7 @@ fun MainScreen(
             startDestination = CurrentWeatherRoute,
         ) {
             currentWeatherDestination()
-            historyDestination()
+            weatherHistoryDestination()
         }
     }
 }

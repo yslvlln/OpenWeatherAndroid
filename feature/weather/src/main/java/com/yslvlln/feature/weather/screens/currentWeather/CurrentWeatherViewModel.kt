@@ -1,8 +1,9 @@
-package com.yslvlln.feature.weather
+package com.yslvlln.feature.weather.screens.currentWeather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yslvlln.core.data.repository.WeatherRepository
+import com.yslvlln.feature.weather.state.CurrentWeatherUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

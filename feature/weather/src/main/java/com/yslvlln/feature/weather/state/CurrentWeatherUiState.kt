@@ -1,4 +1,4 @@
-package com.yslvlln.feature.weather
+package com.yslvlln.feature.weather.state
 
 import com.yslvlln.core.model.CurrentWeather
 

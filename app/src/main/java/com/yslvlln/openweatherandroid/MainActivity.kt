@@ -16,7 +16,6 @@ import com.yslvlln.feature.auth.screens.signin.SignInRoute
 import com.yslvlln.feature.auth.screens.signin.signInDestination
 import com.yslvlln.feature.auth.screens.signup.SignUpRoute
 import com.yslvlln.feature.auth.screens.signup.signUpDestination
-import com.yslvlln.feature.weather.currentWeatherDestination
 import com.yslvlln.openweatherandroid.screens.MainRoute
 import com.yslvlln.openweatherandroid.screens.mainDestination
 import com.yslvlln.openweatherandroid.ui.theme.OpenWeatherAndroidTheme

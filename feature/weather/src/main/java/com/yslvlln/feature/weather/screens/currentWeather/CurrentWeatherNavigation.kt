@@ -1,4 +1,4 @@
-package com.yslvlln.feature.weather
+package com.yslvlln.feature.weather.screens.currentWeather
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable

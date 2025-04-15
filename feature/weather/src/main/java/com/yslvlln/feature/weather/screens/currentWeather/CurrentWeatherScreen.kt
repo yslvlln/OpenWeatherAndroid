@@ -1,4 +1,4 @@
-package com.yslvlln.feature.weather
+package com.yslvlln.feature.weather.screens.currentWeather
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yslvlln.feature.weather.R
+import com.yslvlln.feature.weather.state.CurrentWeatherUiState
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
